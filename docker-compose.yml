@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+
+    smr:
+        image: smrealms/smr:latest
+        restart: always
+        volumes:
+            - ${SMR_CONFIG_DIR}:/smr/config:ro
+            - ${SMR_UPLOAD_DIR}:/smr/htdocs/upload:rw
+
+    discord:
+        image: smrealms/smr:discordbot
+        restart: always
+        volumes:
+            - ${SMR_CONFIG_DIR}:/smr/config:ro
