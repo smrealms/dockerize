@@ -8,9 +8,11 @@ services:
         volumes:
             - ${SMR_CONFIG_DIR}:/smr/config:ro
             - ${SMR_UPLOAD_DIR}:/smr/htdocs/upload:rw
+            - /var/run/mysqld:/var/run/mysqld
 
     discord:
         image: smrealms/smr:discordbot
         restart: always
         volumes:
             - ${SMR_CONFIG_DIR}:/smr/config:ro
+            - /var/run/mysqld:/var/run/mysqld
