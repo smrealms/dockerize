@@ -16,3 +16,10 @@ services:
         volumes:
             - ${SMR_CONFIG_DIR}:/smr/config:ro
             - /var/run/mysqld:/var/run/mysqld
+
+    irc:
+        image: smrealms/smr:ircbot
+        restart: always
+        volumes:
+            - ${SMR_CONFIG_DIR}:/smr/config:ro
+            - /var/run/mysqld:/var/run/mysqld
