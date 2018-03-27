@@ -9,6 +9,17 @@ services:
             - ${SMR_CONFIG_DIR}:/smr/config:ro
             - ${SMR_UPLOAD_DIR}:/smr/htdocs/upload:rw
             - /var/run/mysqld:/var/run/mysqld
+        depends_on:
+            - smtp
+
+    smtp:
+        image: hemberger/postfix-relay
+        restart: always
+        environment:
+            - OPENDKIM_DOMAINS=smrealms.de
+            - OPENDKIM_SELECTOR=key1
+        volumes:
+            - ./opendkim:/etc/opendkim/keys/smrealms.de
 
     discord:
         image: smrealms/smr:discordbot
