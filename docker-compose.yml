@@ -37,8 +37,6 @@ services:
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
-        ports:
-            - 8081:80
         volumes:
-            - ./phpmyadmin/config.php:/etc/phpmyadmin/config.user.inc.php
+            - ./phpmyadmin/config.php:/etc/phpmyadmin/config.user.inc.php:ro
             - /var/run/mysqld:/var/run/mysqld
