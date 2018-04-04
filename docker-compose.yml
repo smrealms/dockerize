@@ -40,3 +40,12 @@ services:
         volumes:
             - ./phpmyadmin/config.php:/etc/phpmyadmin/config.user.inc.php:ro
             - /var/run/mysqld:/var/run/mysqld
+
+    nginx:
+        image: nginx:alpine
+        ports:
+            - "8082:8082"
+        volumes:
+            - ./nginx:/etc/nginx/conf.d:ro
+            - /etc/letsencrypt.sh/certs/smrealms.de:/etc/letsencrypt.sh/certs/smrealms.de:ro
+            - /etc/ssl/certs/dhparam.pem:/etc/ssl/certs/dhparam.pem:ro
