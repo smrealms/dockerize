@@ -8,9 +8,9 @@ services:
         volumes:
             - ${SMR_CONFIG_DIR}:/smr/config:ro
             - ${SMR_UPLOAD_DIR}:/smr/htdocs/upload:rw
-            - /var/run/mysqld:/var/run/mysqld
         depends_on:
             - smtp
+            - mysql
 
     smtp:
         image: hemberger/postfix-relay
@@ -21,25 +21,48 @@ services:
         volumes:
             - ./opendkim:/etc/opendkim/keys/smrealms.de
 
+    mysql:
+        image: mysql:5.7
+        restart: always
+        container_name: ${MYSQL_HOST}
+        # By using the default image, we must expose the secrets in
+        # the runtime environment (because we can't specify build args).
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_USER:          smr
+            MYSQL_PASSWORD:      ${MYSQL_PASSWORD}
+            MYSQL_DATABASE:      smr_live
+        volumes:
+            - ./data/db:/var/lib/mysql
+        # The mysql:5.7+ docker default sql mode uses STRICT_TRANS_TABLES,
+        # which is incompatible with the way the SMR database is used.
+        # Therefore, we override CMD to omit this sql mode.
+        command: ["mysqld", "--sql-mode=NO_ENGINE_SUBSTITUTION"]
+
     discord:
         image: smrealms/smr:discordbot
         restart: always
         volumes:
             - ${SMR_CONFIG_DIR}:/smr/config:ro
-            - /var/run/mysqld:/var/run/mysqld
+        depends_on:
+            - mysql
 
     irc:
         image: smrealms/smr:ircbot
         restart: always
         volumes:
             - ${SMR_CONFIG_DIR}:/smr/config:ro
-            - /var/run/mysqld:/var/run/mysqld
+        depends_on:
+            - mysql
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
         volumes:
             - ./phpmyadmin/config.php:/etc/phpmyadmin/config.user.inc.php:ro
-            - /var/run/mysqld:/var/run/mysqld
+        environment:
+            PMA_HOST: mysql
+        depends_on:
+            - mysql
 
     nginx:
         image: nginx:alpine
