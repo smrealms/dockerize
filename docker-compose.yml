@@ -39,6 +39,12 @@ services:
         # Therefore, we override CMD to omit this sql mode.
         command: ["mysqld", "--sql-mode=NO_ENGINE_SUBSTITUTION"]
 
+    flyway:
+        image: smrealms/smr:flyway
+        command: -url=jdbc:mysql://${MYSQL_HOST}/smr_live -user=smr -password=${MYSQL_PASSWORD} migrate
+        depends_on:
+            - mysql
+
     discord:
         image: smrealms/smr:discordbot
         restart: always
