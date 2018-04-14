@@ -1,3 +1,4 @@
 /phpmyadmin/config.php
 /config
 /.env
+/nginx/phpmyadmin-allow.inc
