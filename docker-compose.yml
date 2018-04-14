@@ -63,8 +63,6 @@ services:
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
-        volumes:
-            - ./phpmyadmin/config.php:/etc/phpmyadmin/config.user.inc.php:ro
         environment:
             PMA_HOST: mysql
         depends_on:
