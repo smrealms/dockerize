@@ -65,6 +65,7 @@ services:
         image: phpmyadmin/phpmyadmin
         environment:
             PMA_HOST: mysql
+            PMA_ABSOLUTE_URI: https://www.smrealms.de:8082
         depends_on:
             - mysql
 
