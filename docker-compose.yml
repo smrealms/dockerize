@@ -16,6 +16,7 @@ services:
         image: hemberger/postfix-relay
         restart: always
         environment:
+            - POSTFIX_myhostname=oberon.fem.tu-ilmenau.de
             - OPENDKIM_DOMAINS=smrealms.de
             - OPENDKIM_SELECTOR=key1
         volumes:
