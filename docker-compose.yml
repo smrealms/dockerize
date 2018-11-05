@@ -11,6 +11,7 @@ services:
         depends_on:
             - smtp
             - mysql
+            - nginx
 
     smtp:
         image: hemberger/postfix-relay
@@ -69,12 +70,36 @@ services:
             PMA_ABSOLUTE_URI: https://www.smrealms.de:8082
         depends_on:
             - mysql
+            - nginx
 
     nginx:
         image: nginx:alpine
         ports:
+            - "80:80"
+            - "443:443"
             - "8082:8082"
         volumes:
             - ./nginx:/etc/nginx/conf.d:ro
-            - /etc/letsencrypt.sh/certs/smrealms.de:/etc/letsencrypt.sh/certs/smrealms.de:ro
-            - /etc/ssl/certs/dhparam.pem:/etc/ssl/certs/dhparam.pem:ro
+            - /etc/letsencrypt:/etc/letsencrypt:ro
+            - certbot-renewal:/www-certbot
+
+    certbot:
+        image: certbot/certbot
+        command: "certonly --webroot -d smrealms.de -d www.smrealms.de --webroot-path /www-certbot -m support@smrealms.de --agree-tos"
+        volumes:
+            - /etc/letsencrypt:/etc/letsencrypt
+            - /var/log/letsencrypt:/var/log/letsencrypt
+            - certbot-renewal:/www-certbot
+
+    # Only used during the initial install of the certificates
+    nginx-certbot-install:
+        image: nginx:alpine
+        ports:
+            - "80:80"
+        volumes:
+            - ./nginx/certbot-install:/etc/nginx/conf.d:ro
+            - certbot-renewal:/www-certbot
+
+volumes:
+    # Webroot for certificate renewal (temporary storage)
+    certbot-renewal:
