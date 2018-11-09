@@ -6,7 +6,7 @@ services:
         image: smrealms/smr:latest
         restart: always
         volumes:
-            - ${SMR_CONFIG_DIR}:/smr/config:ro
+            - ./config:/smr/config:ro
             - ${SMR_UPLOAD_DIR}:/smr/htdocs/upload:rw
         depends_on:
             - smtp
@@ -51,7 +51,7 @@ services:
         image: smrealms/smr:discordbot
         restart: always
         volumes:
-            - ${SMR_CONFIG_DIR}:/smr/config:ro
+            - ./config:/smr/config:ro
         depends_on:
             - mysql
 
@@ -59,7 +59,7 @@ services:
         image: smrealms/smr:ircbot
         restart: always
         volumes:
-            - ${SMR_CONFIG_DIR}:/smr/config:ro
+            - ./config:/smr/config:ro
         depends_on:
             - mysql
 
