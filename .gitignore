@@ -2,3 +2,6 @@
 /config
 /.env
 /nginx/phpmyadmin-allow.inc
+
+# Player uploaded files (e.g. album photos and ship logos)
+/player-upload
