@@ -1,6 +1,10 @@
-/phpmyadmin/config.php
+# Configuration files for PHP services (smr, discord, irc)
 /config
+
+# Environment file for docker-compose
 /.env
+
+# List of allowed IP addresses for phpmyadmin access
 /nginx/phpmyadmin-allow.inc
 
 # Player uploaded files (e.g. album photos and ship logos)
