@@ -12,3 +12,9 @@
 
 # Player uploaded files (e.g. album photos and ship logos)
 /player-upload
+
+# Database backups
+/backup/daily
+
+# All dkim keys
+opendkim/*
