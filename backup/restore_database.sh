@@ -1,13 +1,22 @@
 #!/usr/bin/env bash
 
-set -exo pipefail
+set -eo pipefail
 
-base_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
-backup_dir="${base_dir}/daily"
-data_dir="${base_dir}/../data/db"
+base_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." >/dev/null && pwd)"
+cd "${base_dir}" || exit
+
+backup_dir="${base_dir}/backup/daily"
+data_dir="${base_dir}/data/db"
 
 # Find the youngest backup file in the backup dir
 backup_file="$(ls -1t "${backup_dir}" | head -n 1)"
+
+if [[ -z "${backup_file}" ]]; then
+    echo "Unable to find a valid backup file. Check ${backup_dir}"
+    exit 1
+fi
+
+echo "Import '${backup_file}' into database..."
 
 # Unzip it to a directory that mysql container has access to
 bzcat --keep "${backup_dir}/${backup_file}" > "${data_dir}/dump.sql"
