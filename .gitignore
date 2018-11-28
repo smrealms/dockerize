@@ -1,3 +1,6 @@
+# IntelliJ project files.
+.idea
+
 # Configuration files for PHP services (smr, discord, irc)
 /config
 
