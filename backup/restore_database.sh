@@ -7,18 +7,17 @@ cd "${base_dir}" || exit
 
 backup_dir="${base_dir}/backup/daily"
 
-# Find the youngest backup file in the backup dir
-backup_file="$(ls -1t "${backup_dir}" | head -n 1)"
+# Take the given parameter as dump or find the youngest backup file in the backup dir
+backup_file="${1:-$(cd "${backup_dir}" && ls -1t *.bz2 | head -n 1)}"
 
-if [[ -z "${backup_file}" ]]; then
+# Check if we have a valid file
+if [[ ! -f "${backup_dir}/${backup_file}" ]]; then
     echo "Unable to find a valid backup file. Check ${backup_dir}"
     exit 1
 fi
 
 echo "Import '${backup_file}' into database..."
-
-# Unzip it to a directory that mysql container has access to
-bzcat --keep "${backup_dir}/${backup_file}" > "${data_dir}/dump.sql"
+echo "Hint: You can also provide a dump via command line parameter, eg: ${0} smr_live_2018-11-28.sql.bz2"
 
 # Write mysql credentials in the container to avoid
 # mysql: [Warning] Using a password on the command line interface can be insecure.
