@@ -6,7 +6,6 @@ base_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." >/dev/null && pwd)"
 cd "${base_dir}" || exit
 
 backup_dir="${base_dir}/backup/daily"
-data_dir="${base_dir}/data/db"
 
 # Find the youngest backup file in the backup dir
 backup_file="$(ls -1t "${backup_dir}" | head -n 1)"
@@ -25,7 +24,5 @@ bzcat --keep "${backup_dir}/${backup_file}" > "${data_dir}/dump.sql"
 # mysql: [Warning] Using a password on the command line interface can be insecure.
 docker-compose exec -T mysql sh -c 'echo "[client]\nhost=localhost\nuser=root\npassword=$MYSQL_ROOT_PASSWORD" > ${HOME}/.my.cnf'
 
-# Import the dump
-docker-compose exec -T mysql sh -c 'mysql < /var/lib/mysql/dump.sql'
-
-rm -f "${data_dir}/dump.sql"
+# Unzip dump and import on the fly
+bzcat --keep "${backup_dir}/${backup_file}" | docker exec -i smr-mysql mysql
