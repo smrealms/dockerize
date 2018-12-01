@@ -111,6 +111,7 @@ services:
             S3_PATH: s3://smrealms-backup
         volumes:
             - ./backup/daily:/data/daily:ro
+            - ./backup/archive:/data/archive:ro
             - ./player-upload:/data/player-upload:ro
 
 volumes:
