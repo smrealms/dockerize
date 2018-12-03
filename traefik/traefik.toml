@@ -1,0 +1,44 @@
+logLevel = "INFO"
+
+defaultEntryPoints = ["http","https"]
+
+[entryPoints]
+
+  [entryPoints.http]
+    address = ":80"
+
+    [entryPoints.http.redirect]
+      entryPoint = "https"
+
+  [entryPoints.https]
+    address = ":443"
+
+    [entryPoints.https.tls]
+
+# We need this for the /traefik/dashboard to work
+[api]
+
+[acme]
+  email = "mrspock@smrealms.de"
+  storage = "/acme/acme.json"
+  caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
+  acmeLogging = true
+  entryPoint = "https"
+
+  [acme.tlsChallenge]
+
+#[[acme.domains]]
+#  main = "smrealms.de"
+#  sans = ["www.smrealms.de"]
+#[[acme.domains]]
+#  main = "smrealms.com"
+#  sans = ["www.smrealms.com"]
+[[acme.domains]]
+  main = "einstein.fem.tu-ilmenau.de"
+
+[docker]
+  exposedByDefault = false
+
+[traefikLog]
+
+[accessLog]
