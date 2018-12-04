@@ -1,26 +1,49 @@
-version: '2'
+version: '3.7'
+
+networks:
+  frontend:
+      name: frontend
+      external: false
+  backend:
+      name: backend
+      external: false
 
 services:
 
     smr:
         image: smrealms/smr:latest
         restart: unless-stopped
+        container_name: smr-game
+        networks:
+          - frontend
+          - backend
         volumes:
             - ./config:/smr/config:ro
             - ./player-upload:/smr/htdocs/upload:rw
+        labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=frontend"
+            - "traefik.backend=smr"
+            - "traefik.frontend.passHostHeader=true"
+            - "traefik.frontend.rule=PathPrefix:/"
+            - "traefik.port=80"
         depends_on:
             - smtp
             - mysql
-            - phpmyadmin
-            - nginx
+            - traefik
 
     smtp:
         image: hemberger/postfix-relay
         restart: unless-stopped
+        container_name: smr-smtp
+        networks:
+          - backend
         environment:
             - POSTFIX_myhostname=oberon.fem.tu-ilmenau.de
             - OPENDKIM_DOMAINS=smrealms.de
             - OPENDKIM_SELECTOR=key1
+        labels:
+            - "traefik.enable=false"
         volumes:
             - ./opendkim:/etc/opendkim/keys/smrealms.de
 
@@ -28,6 +51,8 @@ services:
         image: mysql:5.7
         restart: unless-stopped
         container_name: ${MYSQL_HOST}
+        networks:
+          - backend
         # By using the default image, we must expose the secrets in
         # the runtime environment (because we can't specify build args).
         environment:
@@ -37,6 +62,8 @@ services:
             MYSQL_DATABASE:      smr_live
         volumes:
             - ./data/db:/var/lib/mysql
+        labels:
+            - "traefik.enable=false"
         # The mysql:5.7+ docker default sql mode uses STRICT_TRANS_TABLES,
         # which is incompatible with the way the SMR database is used.
         # Therefore, we override CMD to omit this sql mode.
@@ -45,66 +72,87 @@ services:
     flyway:
         image: smrealms/smr:flyway
         command: -url=jdbc:mysql://${MYSQL_HOST}/smr_live -user=smr -password=${MYSQL_PASSWORD} migrate
+        networks:
+          - backend
+        labels:
+            - "traefik.enable=false"
         depends_on:
             - mysql
 
     discord:
         image: smrealms/smr:discordbot
         restart: unless-stopped
+        networks:
+          - backend
         volumes:
             - ./config:/smr/config:ro
+        labels:
+            - "traefik.enable=false"
         depends_on:
             - mysql
 
     irc:
         image: smrealms/smr:ircbot
         restart: unless-stopped
+        networks:
+          - backend
         volumes:
             - ./config:/smr/config:ro
+        labels:
+            - "traefik.enable=false"
         depends_on:
             - mysql
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
         restart: unless-stopped
+        container_name: smr-phpmyadmin
+        networks:
+          - frontend
+          - backend
         environment:
             PMA_HOST: mysql
-            PMA_ABSOLUTE_URI: https://www.smrealms.de:8082
+            PMA_ABSOLUTE_URI: https://www.smrealms.de/phpmyadmin/
+        labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=frontend"
+            - "traefik.backend=phpmyadmin"
+            - "traefik.frontend.passHostHeader=true"
+            - "traefik.frontend.rule=PathPrefixStrip:/phpmyadmin/;AddPrefix:/"
+            - "traefik.port=80"
         depends_on:
             - mysql
-            - nginx
+            - traefik
 
-    nginx:
-        image: nginx:alpine
-        restart: unless-stopped
+    traefik:
+        image: traefik:latest
+        container_name: smr-traefik
+        networks:
+          - frontend
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ./traefik/acme.json:/acme/acme.json
+            - ./traefik/traefik.toml:/etc/traefik/traefik.toml
+        labels:
+            - "traefik.enable=true"
+            - "traefik.backend=traefik-dashboard"
+            - "traefik.docker.network=frontend"
+            - "traefik.frontend.passHostHeader=true"
+            - "traefik.frontend.rule=PathPrefixStrip:/traefik"
+            - "traefik.frontend.auth.basic.users=traefik:$$apr1$$N1XTczE5$$5GvS93f.oSRstkxmjw9JD0"
+            - "traefik.port=8080"
         ports:
-            - "80:80"
-            - "443:443"
-            - "8082:8082"
-        volumes:
-            - ./nginx:/etc/nginx/conf.d:ro
-            - /etc/letsencrypt:/etc/letsencrypt:ro
-            - certbot-renewal:/www-certbot
-
-    certbot:
-        image: certbot/certbot
-        command: "certonly --webroot -d smrealms.de -d www.smrealms.de --webroot-path /www-certbot -m support@smrealms.de --agree-tos"
-        volumes:
-            - /etc/letsencrypt:/etc/letsencrypt
-            - /var/log/letsencrypt:/var/log/letsencrypt
-            - certbot-renewal:/www-certbot
-
-    # Only used during the initial install of the certificates
-    nginx-certbot-install:
-        image: nginx:alpine
-        ports:
-            - "80:80"
-        volumes:
-            - ./nginx/certbot-install:/etc/nginx/conf.d:ro
-            - certbot-renewal:/www-certbot
+            -   target: 80
+                published: 80
+                mode: host
+            -   target: 443
+                published: 443
+                mode: host
 
     backup-s3:
         image: hemberger/docker-backup-to-s3
+        networks:
+          - backend
         environment:
             ACCESS_KEY: ${S3_ACCESS_KEY}
             SECRET_KEY: ${S3_SECRET_KEY}
@@ -113,7 +161,3 @@ services:
             - ./backup/daily:/data/daily:ro
             - ./backup/archive:/data/archive:ro
             - ./player-upload:/data/player-upload:ro
-
-volumes:
-    # Webroot for certificate renewal (temporary storage)
-    certbot-renewal:
