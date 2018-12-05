@@ -126,6 +126,7 @@ services:
 
     traefik:
         image: traefik:latest
+        restart: unless-stopped
         container_name: smr-traefik
         networks:
             - frontend
