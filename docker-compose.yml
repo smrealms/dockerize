@@ -15,8 +15,8 @@ services:
         restart: unless-stopped
         container_name: smr-game
         networks:
-          - frontend
-          - backend
+            - frontend
+            - backend
         volumes:
             - ./config:/smr/config:ro
             - ./player-upload:/smr/htdocs/upload:rw
@@ -37,7 +37,7 @@ services:
         restart: unless-stopped
         container_name: smr-smtp
         networks:
-          - backend
+            - backend
         environment:
             - POSTFIX_myhostname=oberon.fem.tu-ilmenau.de
             - OPENDKIM_DOMAINS=smrealms.de
@@ -52,7 +52,7 @@ services:
         restart: unless-stopped
         container_name: ${MYSQL_HOST}
         networks:
-          - backend
+            - backend
         # By using the default image, we must expose the secrets in
         # the runtime environment (because we can't specify build args).
         environment:
@@ -73,7 +73,7 @@ services:
         image: smrealms/smr:flyway
         command: -url=jdbc:mysql://${MYSQL_HOST}/smr_live -user=smr -password=${MYSQL_PASSWORD} migrate
         networks:
-          - backend
+            - backend
         labels:
             - "traefik.enable=false"
         depends_on:
@@ -83,7 +83,7 @@ services:
         image: smrealms/smr:discordbot
         restart: unless-stopped
         networks:
-          - backend
+            - backend
         volumes:
             - ./config:/smr/config:ro
         labels:
@@ -95,7 +95,7 @@ services:
         image: smrealms/smr:ircbot
         restart: unless-stopped
         networks:
-          - backend
+            - backend
         volumes:
             - ./config:/smr/config:ro
         labels:
@@ -108,8 +108,8 @@ services:
         restart: unless-stopped
         container_name: smr-phpmyadmin
         networks:
-          - frontend
-          - backend
+            - frontend
+            - backend
         environment:
             PMA_HOST: mysql
             PMA_ABSOLUTE_URI: https://www.smrealms.de/phpmyadmin/
@@ -128,7 +128,7 @@ services:
         image: traefik:latest
         container_name: smr-traefik
         networks:
-          - frontend
+            - frontend
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - ./traefik/acme.json:/acme/acme.json
@@ -152,7 +152,7 @@ services:
     backup-s3:
         image: hemberger/docker-backup-to-s3
         networks:
-          - backend
+            - backend
         environment:
             ACCESS_KEY: ${S3_ACCESS_KEY}
             SECRET_KEY: ${S3_SECRET_KEY}
