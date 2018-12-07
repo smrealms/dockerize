@@ -158,6 +158,7 @@ services:
             ACCESS_KEY: ${S3_ACCESS_KEY}
             SECRET_KEY: ${S3_SECRET_KEY}
             S3_PATH: s3://smrealms-backup
+            PARAMS: --delete-removed
         volumes:
             - ./backup/daily:/data/daily:ro
             - ./backup/archive:/data/archive:ro
