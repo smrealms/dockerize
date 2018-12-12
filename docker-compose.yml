@@ -143,12 +143,8 @@ services:
             - "traefik.frontend.auth.basic.users=traefik:$$apr1$$N1XTczE5$$5GvS93f.oSRstkxmjw9JD0"
             - "traefik.port=8080"
         ports:
-            -   target: 80
-                published: 80
-                mode: host
-            -   target: 443
-                published: 443
-                mode: host
+            - "80:80"
+            - "443:443"
 
     backup-s3:
         image: hemberger/docker-backup-to-s3
