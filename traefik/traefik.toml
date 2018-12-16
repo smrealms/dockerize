@@ -21,15 +21,15 @@ defaultEntryPoints = ["http","https"]
 [acme]
   email = "mrspock@smrealms.de"
   storage = "/acme/acme.json"
-  caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
+  caServer = "https://acme-v02.api.letsencrypt.org/directory"
   acmeLogging = true
   entryPoint = "https"
 
   [acme.tlsChallenge]
 
-#[[acme.domains]]
-#  main = "smrealms.de"
-#  sans = ["www.smrealms.de"]
+[[acme.domains]]
+  main = "smrealms.de"
+  sans = ["www.smrealms.de"]
 #[[acme.domains]]
 #  main = "smrealms.com"
 #  sans = ["www.smrealms.com"]
