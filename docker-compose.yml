@@ -124,6 +124,20 @@ services:
             - mysql
             - traefik
 
+    api-docs:
+        image: smrealms/smr:api-docs
+        restart: unless-stopped
+        networks:
+            - frontend
+        labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=frontend"
+            - "traefik.backend=api-docs"
+            - "traefik.port=80"
+            - "traefik.frontend.rule=Host:api.smrealms.de"
+        depends_on:
+            - traefik
+
     traefik:
         image: traefik:latest
         restart: unless-stopped
