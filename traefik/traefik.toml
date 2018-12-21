@@ -13,6 +13,12 @@ defaultEntryPoints = ["http","https"]
   [entryPoints.https]
     address = ":443"
 
+    [entryPoints.https.redirect]
+    # Canonicalize non-www to www
+    regex = "^https://smrealms.de/(.*)"
+    replacement = "https://www.smrealms.de/$1"
+    permanent = true
+
     [entryPoints.https.tls]
 
 # We need this for the /traefik/dashboard to work
