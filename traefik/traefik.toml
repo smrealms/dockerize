@@ -36,7 +36,7 @@ defaultEntryPoints = ["http","https"]
 [[acme.domains]]
   main = "smrealms.de"
   sans = ["www.smrealms.de", "api.smrealms.de", "wiki.smrealms.de",
-          "beta.smrealms.de"]
+          "beta.smrealms.de", "smrcnn.smrealms.de"]
 #[[acme.domains]]
 #  main = "smrealms.com"
 #  sans = ["www.smrealms.com"]
