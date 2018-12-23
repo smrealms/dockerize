@@ -7,9 +7,6 @@
 # Environment file for docker-compose
 /.env
 
-# List of allowed IP addresses for phpmyadmin access
-/nginx/phpmyadmin-allow.inc
-
 # Player uploaded files (e.g. album photos and ship logos)
 /player-upload
 

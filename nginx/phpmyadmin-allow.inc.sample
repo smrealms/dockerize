@@ -1,2 +1,0 @@
-# Specifies IP addresses allowed to access phpmyadmin
-allow XX.XXX.XXX.XX;
