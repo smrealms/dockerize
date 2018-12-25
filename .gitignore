@@ -16,3 +16,6 @@
 
 # All dkim keys
 opendkim/*
+
+# traefiks certificate store
+traefik/acme.json
