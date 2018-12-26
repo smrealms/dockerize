@@ -16,5 +16,6 @@ backup_file="$backup_dir/smr_live_$today.sql"
 /usr/local/bin/docker-compose exec -T mysql sh -c 'mysqldump --add-drop-table --add-locks --quote-names --databases smr_live' > ${backup_file}
 bzip2 "${backup_file}"
 
-# Delete all backups that are older than 14 days
-find "${backup_dir}" -daystart -mtime +14 -delete
+# Delete all backups that are older than 7 days
+# S3 bucket has it's own expiration of 14 days. To avoid uploading old backups we delete much sooner locally than on s3
+find "${backup_dir}" -daystart -mtime +7 -delete
