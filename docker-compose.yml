@@ -103,7 +103,7 @@ services:
         depends_on:
             - mysql
 
-    phpmyadmin:
+    pma:
         image: phpmyadmin/phpmyadmin
         restart: unless-stopped
         container_name: smr-phpmyadmin
@@ -112,13 +112,13 @@ services:
             - backend
         environment:
             PMA_HOST: mysql
-            PMA_ABSOLUTE_URI: https://www.smrealms.de/phpmyadmin/
+            PMA_ABSOLUTE_URI: https://www.smrealms.de/pma/
         labels:
             - "traefik.enable=true"
             - "traefik.docker.network=frontend"
-            - "traefik.backend=phpmyadmin"
+            - "traefik.backend=pma"
             - "traefik.frontend.passHostHeader=true"
-            - "traefik.frontend.rule=PathPrefixStrip:/phpmyadmin/;AddPrefix:/"
+            - "traefik.frontend.rule=PathPrefixStrip:/pma/"
             - "traefik.port=80"
         depends_on:
             - mysql
