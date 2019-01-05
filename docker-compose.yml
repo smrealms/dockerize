@@ -111,7 +111,7 @@ services:
             - frontend
             - backend
         environment:
-            PMA_HOST: mysql
+            PMA_HOST: ${MYSQL_HOST}
             PMA_ABSOLUTE_URI: https://www.smrealms.de/pma/
         labels:
             - "traefik.enable=true"
