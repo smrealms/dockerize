@@ -116,7 +116,7 @@ services:
         labels:
             - "traefik.enable=true"
             - "traefik.docker.network=frontend"
-            - "traefik.backend=pma"
+            - "traefik.backend=smr-phpmyadmin"
             - "traefik.frontend.passHostHeader=true"
             - "traefik.frontend.rule=Host:www.smrealms.de;PathPrefixStrip:/pma/"
             - "traefik.port=80"
