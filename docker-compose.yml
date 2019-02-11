@@ -118,7 +118,7 @@ services:
             - "traefik.docker.network=frontend"
             - "traefik.backend=pma"
             - "traefik.frontend.passHostHeader=true"
-            - "traefik.frontend.rule=PathPrefixStrip:/pma/"
+            - "traefik.frontend.rule=Host:www.smrealms.de;PathPrefixStrip:/pma/"
             - "traefik.port=80"
         depends_on:
             - mysql
