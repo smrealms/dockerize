@@ -107,7 +107,7 @@ services:
 
     npc:
         image: smrealms/smr:npc
-        restart: no
+        restart: "no"
         networks:
             - backend
         volumes:
