@@ -105,6 +105,18 @@ services:
         depends_on:
             - mysql
 
+    npc:
+        image: smrealms/smr:npc
+        restart: no
+        networks:
+            - backend
+        volumes:
+            - ./config:/smr/config:ro
+        labels:
+            - "traefik.enable=false"
+        depends_on:
+            - mysql
+
     pma:
         image: phpmyadmin/phpmyadmin
         restart: unless-stopped
