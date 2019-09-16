@@ -153,7 +153,7 @@ services:
             - traefik
 
     traefik:
-        image: traefik:latest
+        image: traefik:1.7
         restart: unless-stopped
         container_name: smr-traefik
         networks:
