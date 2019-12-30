@@ -116,6 +116,7 @@ services:
             - "traefik.enable=false"
         depends_on:
             - mysql
+            - smtp
 
     pma:
         image: phpmyadmin/phpmyadmin
