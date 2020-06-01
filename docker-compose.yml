@@ -173,6 +173,12 @@ services:
         ports:
             - "80:80"
             - "443:443"
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "100m"
+                max-file: "7"
+                compress: "true"
 
     backup-s3:
         image: hemberger/docker-backup-to-s3
