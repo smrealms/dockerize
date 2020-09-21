@@ -1,51 +1,36 @@
-logLevel = "INFO"
-
-defaultEntryPoints = ["http","https"]
-
 [entryPoints]
 
   [entryPoints.http]
     address = ":80"
 
-    [entryPoints.http.redirect]
-      entryPoint = "https"
+    [entryPoints.http.http.redirections.entryPoint]
+      to = "https"
+      scheme = "https"
+      permanent = true
 
   [entryPoints.https]
     address = ":443"
 
-    [entryPoints.https.redirect]
-    # Canonicalize non-www to www
-    regex = "^https://smrealms.de/(.*)"
-    replacement = "https://www.smrealms.de/$1"
-    permanent = true
+    [entryPoints.https.http.tls]
+      certResolver = "myresolver"
 
-    [entryPoints.https.tls]
+[providers]
+  [providers.docker]
+    exposedByDefault = false
+    network = "frontend"
+  [providers.file]
+    filename = "/etc/traefik/file-provider.toml"
 
-# We need this for the /traefik/dashboard to work
+# We need this for the traefik dashboard to work
 [api]
 
-[acme]
+[certificatesResolvers.myresolver.acme]
   email = "mrspock@smrealms.de"
-  storage = "/acme/acme.json"
+  storage = "/etc/traefik/acme.json"
   caServer = "https://acme-v02.api.letsencrypt.org/directory"
-  acmeLogging = true
-  entryPoint = "https"
+  [certificatesResolvers.myresolver.acme.tlsChallenge]
 
-  [acme.tlsChallenge]
-
-[[acme.domains]]
-  main = "smrealms.de"
-  sans = ["www.smrealms.de", "api.smrealms.de", "wiki.smrealms.de",
-          "beta.smrealms.de", "smrcnn.smrealms.de"]
-#[[acme.domains]]
-#  main = "smrealms.com"
-#  sans = ["www.smrealms.com"]
-[[acme.domains]]
-  main = "einstein.fem.tu-ilmenau.de"
-
-[docker]
-  exposedByDefault = false
-
-[traefikLog]
+[log]
+  level = "INFO"
 
 [accessLog]

@@ -22,11 +22,8 @@ services:
             - ./player-upload:/smr/htdocs/upload:rw
         labels:
             - "traefik.enable=true"
-            - "traefik.docker.network=frontend"
-            - "traefik.backend=smr"
-            - "traefik.frontend.passHostHeader=true"
-            - "traefik.frontend.rule=Host:www.smrealms.de;PathPrefix:/"
-            - "traefik.port=80"
+            - "traefik.http.routers.smr-game.rule=Host(`www.smrealms.de`, `smrealms.de`) && PathPrefix(`/`)"
+            - "traefik.http.routers.smr-game.middlewares=nonwww-to-www@file"
         depends_on:
             - smtp
             - mysql
@@ -41,8 +38,6 @@ services:
         environment:
             - POSTFIX_myhostname=einstein.fem.tu-ilmenau.de
             - OPENDKIM_DOMAINS=smrealms.de=key1
-        labels:
-            - "traefik.enable=false"
         volumes:
             - ./opendkim:/etc/opendkim/keys/smrealms.de
 
@@ -61,8 +56,6 @@ services:
             MYSQL_DATABASE:      smr_live
         volumes:
             - ./data/db:/var/lib/mysql
-        labels:
-            - "traefik.enable=false"
         # The mysql:5.7+ docker default sql mode uses STRICT_TRANS_TABLES,
         # which is incompatible with the way the SMR database is used.
         # Therefore, we override CMD to omit this sql mode.
@@ -75,8 +68,6 @@ services:
         command: -url=jdbc:mysql://${MYSQL_HOST}/smr_live?useSSL=false -user=smr -password=${MYSQL_PASSWORD} migrate
         networks:
             - backend
-        labels:
-            - "traefik.enable=false"
         depends_on:
             - mysql
 
@@ -87,8 +78,6 @@ services:
             - backend
         volumes:
             - ./config:/smr/config:ro
-        labels:
-            - "traefik.enable=false"
         depends_on:
             - mysql
 
@@ -99,8 +88,6 @@ services:
             - backend
         volumes:
             - ./config:/smr/config:ro
-        labels:
-            - "traefik.enable=false"
         depends_on:
             - mysql
 
@@ -111,8 +98,6 @@ services:
             - backend
         volumes:
             - ./config:/smr/config:ro
-        labels:
-            - "traefik.enable=false"
         depends_on:
             - mysql
             - smtp
@@ -126,14 +111,11 @@ services:
             - backend
         environment:
             PMA_HOST: ${MYSQL_HOST}
-            PMA_ABSOLUTE_URI: https://www.smrealms.de/pma/
+            PMA_ABSOLUTE_URI: /pma/
         labels:
             - "traefik.enable=true"
-            - "traefik.docker.network=frontend"
-            - "traefik.backend=smr-phpmyadmin"
-            - "traefik.frontend.passHostHeader=true"
-            - "traefik.frontend.rule=Host:www.smrealms.de;PathPrefixStrip:/pma/"
-            - "traefik.port=80"
+            - "traefik.http.routers.smr-pma.rule=Host(`www.smrealms.de`, `smrealms.de`) && PathPrefix(`/pma`)"
+            - "traefik.http.routers.smr-pma.middlewares=slash-then-strip@file"
         depends_on:
             - mysql
             - traefik
@@ -145,31 +127,24 @@ services:
             - frontend
         labels:
             - "traefik.enable=true"
-            - "traefik.docker.network=frontend"
-            - "traefik.backend=api-docs"
-            - "traefik.port=80"
-            - "traefik.frontend.rule=Host:api.smrealms.de"
+            - "traefik.http.routers.smr-api.rule=Host(`api.smrealms.de`)"
         depends_on:
             - traefik
 
     traefik:
-        image: traefik:1.7
+        image: traefik:2.2
         restart: unless-stopped
         container_name: smr-traefik
         networks:
             - frontend
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
-            - ./traefik/acme.json:/acme/acme.json
-            - ./traefik/traefik.toml:/etc/traefik/traefik.toml
+            - ./traefik:/etc/traefik
         labels:
             - "traefik.enable=true"
-            - "traefik.backend=traefik-dashboard"
-            - "traefik.docker.network=frontend"
-            - "traefik.frontend.passHostHeader=true"
-            - "traefik.frontend.rule=PathPrefixStrip:/traefik"
+            - "traefik.http.routers.traefik.rule=Host(`traefik.smrealms.de`)"
+            - "traefik.http.routers.traefik.service=api@internal"
             - "traefik.frontend.auth.basic.users=traefik:$$apr1$$N1XTczE5$$5GvS93f.oSRstkxmjw9JD0"
-            - "traefik.port=8080"
         ports:
             - "80:80"
             - "443:443"
