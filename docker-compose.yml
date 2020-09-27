@@ -144,7 +144,8 @@ services:
             - "traefik.enable=true"
             - "traefik.http.routers.traefik.rule=Host(`traefik.smrealms.de`)"
             - "traefik.http.routers.traefik.service=api@internal"
-            - "traefik.frontend.auth.basic.users=traefik:$$apr1$$N1XTczE5$$5GvS93f.oSRstkxmjw9JD0"
+            - "traefik.http.routers.traefik.middlewares=traefik-auth"
+            - "traefik.http.middlewares.traefik-auth.basicauth.users=traefik:$$apr1$$N1XTczE5$$5GvS93f.oSRstkxmjw9JD0"
         ports:
             - "80:80"
             - "443:443"
