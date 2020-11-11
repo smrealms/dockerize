@@ -18,9 +18,5 @@ fi
 
 echo "Import '${backup_file}' into database..."
 
-# Write mysql credentials in the container to avoid
-# mysql: [Warning] Using a password on the command line interface can be insecure.
-docker-compose exec -T mysql sh -c 'echo "[client]\nhost=localhost\nuser=root\npassword=$MYSQL_ROOT_PASSWORD" > ${HOME}/.my.cnf'
-
 # Unzip dump and import on the fly
 bzcat --keep "${backup_dir}/${backup_file}" | docker exec -i smr-mysql mysql
