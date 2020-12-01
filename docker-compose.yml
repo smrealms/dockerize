@@ -19,6 +19,7 @@ services:
             - backend
         volumes:
             - ./config:/smr/config:ro
+            - ./.env:/smr/.env:ro
             - ./player-upload:/smr/htdocs/upload:rw
         labels:
             - "traefik.enable=true"
@@ -50,10 +51,10 @@ services:
         # By using the default image, we must expose the secrets in
         # the runtime environment (because we can't specify build args).
         environment:
-            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-            MYSQL_USER:          smr
-            MYSQL_PASSWORD:      ${MYSQL_PASSWORD}
-            MYSQL_DATABASE:      smr_live
+            - MYSQL_ROOT_PASSWORD
+            - MYSQL_USER
+            - MYSQL_PASSWORD
+            - MYSQL_DATABASE
         volumes:
             - ./data/db:/var/lib/mysql
         # The mysql:5.7+ docker default sql mode uses STRICT_TRANS_TABLES,
@@ -65,7 +66,7 @@ services:
 
     flyway:
         image: smrealms/smr:flyway
-        command: -url=jdbc:mysql://${MYSQL_HOST}/smr_live?useSSL=false -user=smr -password=${MYSQL_PASSWORD} migrate
+        command: -url=jdbc:mysql://${MYSQL_HOST}/${MYSQL_DATABASE}?useSSL=false -user=${MYSQL_USER} -password=${MYSQL_PASSWORD} migrate
         networks:
             - backend
         depends_on:
