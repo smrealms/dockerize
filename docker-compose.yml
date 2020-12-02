@@ -79,6 +79,7 @@ services:
             - backend
         volumes:
             - ./config:/smr/config:ro
+            - ./.env:/smr/.env:ro
         depends_on:
             - mysql
 
@@ -89,6 +90,7 @@ services:
             - backend
         volumes:
             - ./config:/smr/config:ro
+            - ./.env:/smr/.env:ro
         depends_on:
             - mysql
 
@@ -99,6 +101,7 @@ services:
             - backend
         volumes:
             - ./config:/smr/config:ro
+            - ./.env:/smr/.env:ro
         depends_on:
             - mysql
             - smtp
