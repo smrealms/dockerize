@@ -8,6 +8,18 @@ networks:
       name: backend
       external: false
 
+# Base configuration for the SMR command line tools
+x-smr-cli: &smr-cli
+    image: smrealms/smr:cli
+    networks:
+        - backend
+    volumes:
+        - ./config:/smr/config:ro
+        - ./.env:/smr/.env:ro
+    depends_on:
+        - mysql
+        - smtp
+
 services:
 
     smr:
@@ -73,38 +85,19 @@ services:
             - mysql
 
     discord:
-        image: smrealms/smr:discordbot
+        command: php discord/bot.php
         restart: unless-stopped
-        networks:
-            - backend
-        volumes:
-            - ./config:/smr/config:ro
-            - ./.env:/smr/.env:ro
-        depends_on:
-            - mysql
+        <<: *smr-cli
 
     irc:
-        image: smrealms/smr:ircbot
+        command: php irc/irc.php
         restart: unless-stopped
-        networks:
-            - backend
-        volumes:
-            - ./config:/smr/config:ro
-            - ./.env:/smr/.env:ro
-        depends_on:
-            - mysql
+        <<: *smr-cli
 
     npc:
-        image: smrealms/smr:npc
+        command: php npc/npc.php
         restart: "no"
-        networks:
-            - backend
-        volumes:
-            - ./config:/smr/config:ro
-            - ./.env:/smr/.env:ro
-        depends_on:
-            - mysql
-            - smtp
+        <<: *smr-cli
 
     pma:
         image: phpmyadmin/phpmyadmin
