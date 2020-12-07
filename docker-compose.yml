@@ -11,7 +11,7 @@ networks:
 services:
 
     smr:
-        image: smrealms/smr:latest
+        image: smrealms/smr:web
         restart: unless-stopped
         container_name: smr-game
         networks:
