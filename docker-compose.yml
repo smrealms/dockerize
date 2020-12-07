@@ -124,17 +124,6 @@ services:
             - mysql
             - traefik
 
-    api-docs:
-        image: smrealms/smr:api-docs
-        restart: unless-stopped
-        networks:
-            - frontend
-        labels:
-            - "traefik.enable=true"
-            - "traefik.http.routers.smr-api.rule=Host(`api.smrealms.de`)"
-        depends_on:
-            - traefik
-
     traefik:
         image: traefik:2.3
         restart: unless-stopped
