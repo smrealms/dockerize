@@ -10,7 +10,7 @@ networks:
 
 # Base configuration for the SMR command line tools
 x-smr-cli: &smr-cli
-    image: smrealms/smr:cli
+    image: smrealms/smr:web
     networks:
         - backend
     volumes:
@@ -85,17 +85,17 @@ services:
             - mysql
 
     discord:
-        command: php discord/bot.php
+        command: php tools/discord/bot.php
         restart: unless-stopped
         <<: *smr-cli
 
     irc:
-        command: php irc/irc.php
+        command: php tools/irc/irc.php
         restart: unless-stopped
         <<: *smr-cli
 
     npc:
-        command: php npc/npc.php
+        command: php tools/npc/npc.php
         restart: "no"
         <<: *smr-cli
 
