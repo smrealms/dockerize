@@ -78,7 +78,8 @@ services:
 
     flyway:
         image: smrealms/smr:flyway
-        command: -url=jdbc:mysql://${MYSQL_HOST}/${MYSQL_DATABASE}?useSSL=false -user=${MYSQL_USER} -password=${MYSQL_PASSWORD} migrate
+        # Allow retries in case the mysql service is still spinning up
+        command: -connectRetries=20 -url=jdbc:mysql://${MYSQL_HOST}/${MYSQL_DATABASE}?useSSL=false -user=${MYSQL_USER} -password=${MYSQL_PASSWORD} migrate
         networks:
             - backend
         depends_on:
