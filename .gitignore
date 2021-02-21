@@ -4,9 +4,6 @@
 # Configuration files for PHP services (smr, discord, irc)
 /config
 
-# Environment file for docker-compose
-/.env
-
 # Player uploaded files (e.g. album photos and ship logos)
 /player-upload
 
