@@ -14,3 +14,8 @@
     regex = "^https://smrealms.de/(.*)"
     replacement = "https://www.smrealms.de/$1"
     permanent = true
+
+# Set the default minimum TLS to 1.2, as suggested by SSL Labs
+[tls.options]
+  [tls.options.default]
+    minVersion = "VersionTLS12"
