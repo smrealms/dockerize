@@ -43,7 +43,7 @@ services:
             - traefik
 
     smtp:
-        image: hemberger/postfix-relay
+        image: mwader/postfix-relay
         restart: unless-stopped
         container_name: smr-smtp
         networks:
