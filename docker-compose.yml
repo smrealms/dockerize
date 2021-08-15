@@ -15,7 +15,6 @@ x-smr-cli: &smr-cli
         - backend
     volumes:
         - ./config:/smr/config:ro
-        - ./.env:/smr/.env:ro
     depends_on:
         - mysql
         - smtp
@@ -31,7 +30,6 @@ services:
             - backend
         volumes:
             - ./config:/smr/config:ro
-            - ./.env:/smr/.env:ro
             - ./player-upload:/smr/src/htdocs/upload:rw
         labels:
             - "traefik.enable=true"
