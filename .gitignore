@@ -4,6 +4,9 @@
 # Configuration files for PHP services (smr, discord, irc)
 /config
 
+# MySQL config provided by ansible
+/.my.cnf
+
 # Player uploaded files (e.g. album photos and ship logos)
 /player-upload
 

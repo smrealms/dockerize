@@ -67,6 +67,7 @@ services:
             - MYSQL_DATABASE
         volumes:
             - ./data/db:/var/lib/mysql
+            - ./.my.cnf:/root/.my.cnf:ro
         # The mysql:5.7+ docker default sql mode uses STRICT_TRANS_TABLES,
         # which is incompatible with the way the SMR database is used.
         # Therefore, we override CMD to omit this sql mode.
