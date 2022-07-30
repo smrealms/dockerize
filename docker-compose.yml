@@ -50,7 +50,7 @@ services:
             - POSTFIX_myhostname=einstein.fem.tu-ilmenau.de
             - OPENDKIM_DOMAINS=smrealms.de=key1
         volumes:
-            - ./opendkim:/etc/opendkim/keys/smrealms.de
+            - ./opendkim:/etc/opendkim/keys/smrealms.de:rw
 
     mysql:
         image: mysql:8.0
