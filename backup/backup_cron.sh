@@ -9,7 +9,7 @@ mkdir -p "${backup_dir}"
 today=$(date +%Y-%m-%d)
 backup_file="$backup_dir/smr_live_$today.sql"
 
-/usr/local/bin/docker-compose exec -T mysql sh -c 'mysqldump --add-drop-table --add-locks --quote-names --databases smr_live' > ${backup_file}
+docker compose exec -T mysql sh -c 'mysqldump --add-drop-table --add-locks --quote-names --databases smr_live' > ${backup_file}
 bzip2 "${backup_file}"
 
 # Delete all backups that are older than 7 days
