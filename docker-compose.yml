@@ -116,7 +116,7 @@ services:
             - traefik
 
     traefik:
-        image: traefik:2.8
+        image: traefik:2.9
         restart: unless-stopped
         container_name: smr-traefik
         networks:
