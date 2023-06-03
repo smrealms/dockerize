@@ -1,10 +1,6 @@
-# IntelliJ project files.
-.idea
-
-# Configuration files for PHP services (smr, discord, irc)
-/config
-
-# MySQL config provided by ansible
+# Configuration files provided by ansible
+/.env
+/config/config.specific.php
 /.my.cnf
 
 # Player uploaded files (e.g. album photos and ship logos)

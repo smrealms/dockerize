@@ -6,13 +6,27 @@ networks:
       name: backend
       external: false
 
-# Base configuration for the SMR command line tools
-x-smr-cli: &smr-cli
+# Base configuration for services that use the SMR web image
+x-smr-base: &smr-base
     image: smrealms/smr:web
-    networks:
-        - backend
+    restart: unless-stopped
     volumes:
         - ./config:/smr/config:ro
+        - ./player-upload:/smr/src/htdocs/upload:rw
+    environment:
+        MYSQL_HOST:
+        MYSQL_USER:
+        MYSQL_DATABASE:
+        MYSQL_PASSWORD_FILE: /run/secrets/mysql-password
+    secrets:
+        - source: mysql-password
+          mode: 0444
+
+# Base configuration for the SMR command line tools
+x-smr-cli: &smr-cli
+    <<: *smr-base
+    networks:
+        - backend
     depends_on:
         - mysql
         - smtp
@@ -20,15 +34,11 @@ x-smr-cli: &smr-cli
 services:
 
     smr:
-        image: smrealms/smr:web
-        restart: unless-stopped
+        <<: *smr-base
         container_name: smr-game
         networks:
             - frontend
             - backend
-        volumes:
-            - ./config:/smr/config:ro
-            - ./player-upload:/smr/src/htdocs/upload:rw
         labels:
             - "traefik.enable=true"
             - "traefik.http.routers.smr-game.rule=Host(`www.smrealms.de`, `smrealms.de`) && PathPrefix(`/`)"
@@ -59,10 +69,13 @@ services:
         # By using the default image, we must expose the secrets in
         # the runtime environment (because we can't specify build args).
         environment:
-            - MYSQL_ROOT_PASSWORD
             - MYSQL_USER
-            - MYSQL_PASSWORD
             - MYSQL_DATABASE
+            - MYSQL_PASSWORD=/run/secrets/mysql-password
+            - MYSQL_ROOT_PASSWORD=/run/secrets/mysql-root-password
+        secrets:
+            - mysql-password
+            - mysql-root-password
         volumes:
             - ./data/db:/var/lib/mysql
             - ./.my.cnf:/root/.my.cnf:ro
@@ -86,12 +99,10 @@ services:
 
     discord:
         command: php src/tools/discord/bot.php
-        restart: unless-stopped
         <<: *smr-cli
 
     irc:
         command: php src/tools/irc/irc.php
-        restart: unless-stopped
         <<: *smr-cli
 
     npc:
@@ -153,3 +164,9 @@ services:
             - ./backup/daily:/aws/daily
             - ./backup/archive:/aws/archive
             - ./player-upload:/aws/player-upload
+
+secrets:
+    mysql-password:
+        environment: "MYSQL_PASSWORD"
+    mysql-root-password:
+        environment: "MYSQL_ROOT_PASSWORD"
