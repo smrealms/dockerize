@@ -61,7 +61,7 @@ services:
             - ./opendkim:/etc/opendkim/keys/smrealms.de:rw
 
     mysql:
-        image: mysql:8.0
+        image: mysql:8.1
         restart: unless-stopped
         container_name: ${MYSQL_HOST}
         networks:
