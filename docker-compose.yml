@@ -41,7 +41,7 @@ services:
             - backend
         labels:
             - "traefik.enable=true"
-            - "traefik.http.routers.smr-game.rule=Host(`www.smrealms.de`, `smrealms.de`) && PathPrefix(`/`)"
+            - "traefik.http.routers.smr-game.rule=(Host(`www.smrealms.de`) || Host(`smrealms.de`)) && PathPrefix(`/`)"
             - "traefik.http.routers.smr-game.middlewares=nonwww-to-www@file"
         depends_on:
             - smtp
@@ -117,7 +117,7 @@ services:
             PMA_ABSOLUTE_URI: /pma/
         labels:
             - "traefik.enable=true"
-            - "traefik.http.routers.smr-pma.rule=Host(`www.smrealms.de`, `smrealms.de`) && PathPrefix(`/pma`)"
+            - "traefik.http.routers.smr-pma.rule=(Host(`www.smrealms.de`) || Host(`smrealms.de`)) && PathPrefix(`/pma`)"
             - "traefik.http.routers.smr-pma.middlewares=slash-then-strip@file"
         depends_on:
             - mysql
