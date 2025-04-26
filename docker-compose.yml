@@ -20,7 +20,6 @@ x-smr-base: &smr-base
         MYSQL_PASSWORD_FILE: /run/secrets/mysql-password
     secrets:
         - source: mysql-password
-          mode: 0444
 
 # Base configuration for the SMR command line tools
 x-smr-cli: &smr-cli
