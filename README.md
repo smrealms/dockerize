@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> This repository is archived! It has been replaced by https://github.com/smrealms/smr/.
+
 This docker configuration allows running SMR services without
 needing a clone of the source code repository. It is intended
 to be used on the live game server.
